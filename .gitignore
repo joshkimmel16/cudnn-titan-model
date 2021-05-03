@@ -1,0 +1,8 @@
+.DS_Store
+.vscode
+build
+build_*
+mirror
+temp
+*.log
+config.json
