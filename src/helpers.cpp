@@ -23,6 +23,14 @@ unsigned int vector_op (unsigned int len, TitanV m) {
     return num_atomic * ((len % m.warp_size == 0) ? len/m.warp_size : (len/m.warp_size) + 1);
 }
 
+// TODO: this only accounts for a single tile => must also account for the fact that all tiles are hitting the SAME L2
+// TODO: this means an effective linear reduction in l2_bw based on # of concurrent tiles
+unsigned int l2_latency(unsigned int num_accesses, TitanV m) {
+    unsigned int data_amt = num_accesses * m.val_size; // compute total amount of data that will be transferred
+    unsigned int t_transfer = data_amt / m.l2_bw; // determine time that will take based on L2-scratchpad BW
+    return t_transfer * m.gpu_clock; // convert time to cycles using gpu_clock
+}
+
 // note: this assumes all data required is already present in registers (i.e., ignores memory latency)
 unsigned int tile_op_1 (unsigned int len, unsigned int ht, unsigned elems_thread, TitanV m) {
     // per row of the weights matrix (ht)
@@ -41,6 +49,24 @@ unsigned int tile_op_2 (unsigned int len, unsigned int ht, unsigned elems_thread
     unsigned int weights_reads = ht * inputs_reads; // must read (ht) weights vectors
     unsigned int work = ht * (3 * vector_op(len*elems_thread, m));
     unsigned int store = vector_op(ht, m); // only need to store the output vector once
+    return inputs_reads + weights_reads + work + store;
+}
+
+// note: this assumes all data required is already present in L2 cache (i.e., ignores memory latency)
+unsigned int tile_op_3 (unsigned int len, unsigned int ht, unsigned elems_thread, TitanV m) {
+    // per row of the weights matrix (ht)
+    // must perform: vector-vector multiply, then a vector reduction, then an add to the output = 3 ops
+    // # elements per thread effectively increases the length of the "vector"
+    // must also load all vectors into vector registers and store result
+    // in addition, must account for latency of loads and stores from L2 => some of which is hidden by working on other ops
+    unsigned int inputs_reads = vector_op(len, m); // only need to read the input vector once
+    unsigned int weights_reads = ht * inputs_reads; // must read (ht) weights vectors
+    unsigned int work = ht * (3 * vector_op(len*elems_thread, m));
+    unsigned int store = vector_op(ht, m); // only need to store the output vector once
+
+    // TODO: compute number of accesses, pass to l2_latency
+    // TODO: determine "overlap" of L2 latency and processing work
+
     return inputs_reads + weights_reads + work + store;
 }
 
