@@ -9,8 +9,8 @@ unsigned int threads_per_tile (unsigned int t_i, unsigned int t_n) {
 }
 
 unsigned int get_num_rounds (unsigned int num_tiles, unsigned int threads_tile, unsigned int num_sms, unsigned int max_sm) {
-    unsigned int tmp1 = (max_sm % threads_tile == 0) ? (max_sm / threads_tile) : (max_sm / threads_tile) + 1; // how many tiles can be mapped to 1 SM
-    unsigned int tmp2 = (num_tiles % tmp1 == 0) ? (num_tiles / tmp1) : (num_tiles / tmp1) + 1; // effective # of tiles that need to be mapped per round
+    unsigned int tmp1 = max_sm / threads_tile; // how many tiles can be mapped to 1 SM (want to round down in this case)
+    unsigned int tmp2 = (num_tiles % tmp1 == 0) ? (num_tiles / tmp1) : (num_tiles / tmp1) + 1; // # of tiles normalized by mapping of multiple tiles to 1 SM
     return (tmp2 % num_sms == 0) ? (tmp2 / num_sms) : (tmp2 / num_sms) + 1; // # of parallel rounds of execution
 }
 

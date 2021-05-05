@@ -61,15 +61,18 @@ int main(int argc, char* argv[])
         std::cout << "Threads per tile: " << threads_tile << std::endl;
         std::cout << "Elements per thread: " << elements_per_thread << std::endl;
 
+        unsigned int tiles_per_sm = machine.max_threads_sm / threads_tile; // how many tiles can be mapped to 1 SM (want to round down in this case)
         unsigned int num_rounds = get_num_rounds(tile_count, threads_tile, machine.num_sms, machine.max_threads_sm); // how many sequential rounds of processing are necessary
         // TODO: at this point, make adjustments for memory limitations?
 
+        std::cout << "Tiles per SM: " << tiles_per_sm << std::endl;
         std::cout << "Number of rounds: " << num_rounds << std::endl;
 
-        // for each parallel round of processing, compute "1" tile
+        // for each parallel round of processing, compute x tiles
+        // where x is the # of tiles mapped to 1 SM
         unsigned int cycle_count = 0;
         for (unsigned i=0; i<num_rounds; i++) {
-            cycle_count += tile_op(t_i, t_n, elements_per_thread, machine.warp_size);
+            cycle_count += (tiles_per_sm * tile_op(t_i, t_n, elements_per_thread, machine.warp_size));
         }
 
         std::cout << "Cycles: " << cycle_count << std::endl;
