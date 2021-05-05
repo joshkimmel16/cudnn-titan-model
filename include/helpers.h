@@ -18,7 +18,13 @@ unsigned int vector_op(unsigned int len, unsigned int warp_size);
 
 // given tile dimensions and the # of elements each thread must process in the tile, 
 // return # cycles to compute the tile associated with those parameters
-unsigned int tile_op(unsigned int len, unsigned int ht, unsigned int elems_thread, unsigned int warp_size);
+// this method assumes all data is already present in registers
+unsigned int tile_op_1(unsigned int len, unsigned int ht, unsigned int elems_thread, unsigned int warp_size);
+
+// given tile dimensions and the # of elements each thread must process in the tile, 
+// return # cycles to compute the tile associated with those parameters
+// this method assumes all data is already present in scratchpad memory (but not registers)
+unsigned int tile_op_2(unsigned int len, unsigned int ht, unsigned int elems_thread, unsigned int warp_size);
 
 // given # of cycles and a clock rate (MHz)
 // return # of us to execute those cycles

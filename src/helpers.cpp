@@ -15,6 +15,7 @@ unsigned int get_num_rounds (unsigned int num_tiles, unsigned int threads_tile, 
 }
 
 // note: this assumes all data required is already present in a register (i.e., ignores memory latency)
+// note: if the op is a memory op, it is assumed to take the same amount of time as other ops
 unsigned int vector_op (unsigned int len, unsigned int warp_size) {
     // assume atomic operations take 1 cycle
     // actual operation is broken out into atomic operations based on warp size relative to vector length
@@ -22,12 +23,25 @@ unsigned int vector_op (unsigned int len, unsigned int warp_size) {
     return num_atomic * ((len % warp_size == 0) ? len/warp_size : (len/warp_size) + 1);
 }
 
-// note: this assumes all data required is already present in a register (i.e., ignores memory latency)
-unsigned int tile_op (unsigned int len, unsigned int ht, unsigned elems_thread, unsigned int warp_size) {
+// note: this assumes all data required is already present in registers (i.e., ignores memory latency)
+unsigned int tile_op_1 (unsigned int len, unsigned int ht, unsigned elems_thread, unsigned int warp_size) {
     // per row of the weights matrix (ht)
     // must perform: vector-vector multiply, then a vector reduction, then an add to the output = 3 ops
     // # elements per thread effectively increases the length of the "vector"
     return ht * (3 * vector_op(len*elems_thread, warp_size));
+}
+
+// note: this assumes all data required is already present in scratchpad (i.e., ignores memory latency)
+unsigned int tile_op_2 (unsigned int len, unsigned int ht, unsigned elems_thread, unsigned int warp_size) {
+    // per row of the weights matrix (ht)
+    // must perform: vector-vector multiply, then a vector reduction, then an add to the output = 3 ops
+    // # elements per thread effectively increases the length of the "vector"
+    // must also load all vectors into vector registers and store result
+    unsigned int inputs_reads = vector_op(len, warp_size); // only need to read the input vector once
+    unsigned int weights_reads = ht * inputs_reads; // must read (ht) weights vectors
+    unsigned int work = ht * (3 * vector_op(len*elems_thread, warp_size));
+    unsigned int store = vector_op(ht, warp_size); // only need to store the output vector once
+    return inputs_reads + weights_reads + work + store;
 }
 
 unsigned int cycles_to_time(unsigned int cycles, unsigned int clock) {

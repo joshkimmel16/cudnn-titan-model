@@ -7,10 +7,29 @@
 #include <string.h>
 #include <exception>
 
+enum Type { REGISTER=0, SCRATCHPAD=1, L2=2, MEMORY=3 };
+
+// helper method to call the appropriate analysis methods based on type
+unsigned int tile_op (Type ty, unsigned int len, unsigned int ht, unsigned elems_thread, unsigned int warp_size) {
+    if (ty == REGISTER) {
+        return tile_op_1(len, ht, elems_thread, warp_size);
+    }
+    else if (ty == SCRATCHPAD) {
+        return tile_op_2(len, ht, elems_thread, warp_size);
+    }
+    else if (ty == L2) { // TODO: implement tile_op_3
+        return tile_op_1(len, ht, elems_thread, warp_size);
+    }
+    else { // MEMORY (TODO: implement tile_op_4)
+        return tile_op_1(len, ht, elems_thread, warp_size);
+    }
+}
+
 unsigned int n_i = 1024; // dimension of input vector (default = 1024)
 unsigned int n_n = 1024; // dimension of output vector (default = 1024)
 unsigned int t_i = 32; // tile width (default = 32)
 unsigned int t_n = 32; // tile height (default = 32)
+Type t = REGISTER; // which type of analysis to run (default=REGISTER)
 
 int main(int argc, char* argv[]) 
 {
@@ -33,6 +52,10 @@ int main(int argc, char* argv[])
             else if (strcmp(argv[i], "-tn") == 0) // tile height
             {
                 t_n = std::stoi(argv[i+1]);
+            }
+            else if (strcmp(argv[i], "-ty") == 0) // type
+            {
+                t = (Type)std::stoi(argv[i+1]);
             }
         }
 
@@ -74,7 +97,7 @@ int main(int argc, char* argv[])
         unsigned int tiles_left = tile_count;
         for (unsigned i=0; i<num_rounds; i++) {
             unsigned int multiplier = (tiles_left < tiles_per_sm) ? 1 : tiles_per_sm; // special check to ensure that we're actually using the tile capacity...
-            cycle_count += (multiplier * tile_op(t_i, t_n, elements_per_thread, machine.warp_size));
+            cycle_count += (multiplier * tile_op(t, t_i, t_n, elements_per_thread, machine.warp_size));
             tiles_left -= (tiles_per_sm * machine.num_sms);
         }
 
