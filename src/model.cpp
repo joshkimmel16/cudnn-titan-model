@@ -71,8 +71,11 @@ int main(int argc, char* argv[])
         // for each parallel round of processing, compute x tiles
         // where x is the # of tiles mapped to 1 SM
         unsigned int cycle_count = 0;
+        unsigned int tiles_left = tile_count;
         for (unsigned i=0; i<num_rounds; i++) {
-            cycle_count += (tiles_per_sm * tile_op(t_i, t_n, elements_per_thread, machine.warp_size));
+            unsigned int multiplier = (tiles_left < tiles_per_sm) ? 1 : tiles_per_sm; // special check to ensure that we're actually using the tile capacity...
+            cycle_count += (multiplier * tile_op(t_i, t_n, elements_per_thread, machine.warp_size));
+            tiles_left -= (tiles_per_sm * machine.num_sms);
         }
 
         std::cout << "Cycles: " << cycle_count << std::endl;
