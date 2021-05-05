@@ -10,18 +10,18 @@
 enum Type { REGISTER=0, SCRATCHPAD=1, L2=2, MEMORY=3 };
 
 // helper method to call the appropriate analysis methods based on type
-unsigned int tile_op (Type ty, unsigned int len, unsigned int ht, unsigned elems_thread, unsigned int warp_size) {
+unsigned int tile_op (Type ty, unsigned int len, unsigned int ht, unsigned elems_thread, TitanV m) {
     if (ty == REGISTER) {
-        return tile_op_1(len, ht, elems_thread, warp_size);
+        return tile_op_1(len, ht, elems_thread, m);
     }
     else if (ty == SCRATCHPAD) {
-        return tile_op_2(len, ht, elems_thread, warp_size);
+        return tile_op_2(len, ht, elems_thread, m);
     }
     else if (ty == L2) { // TODO: implement tile_op_3
-        return tile_op_1(len, ht, elems_thread, warp_size);
+        return tile_op_1(len, ht, elems_thread, m);
     }
     else { // MEMORY (TODO: implement tile_op_4)
-        return tile_op_1(len, ht, elems_thread, warp_size);
+        return tile_op_1(len, ht, elems_thread, m);
     }
 }
 
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
         std::cout << "Elements per thread: " << elements_per_thread << std::endl;
 
         unsigned int tiles_per_sm = machine.max_threads_sm / threads_tile; // how many tiles can be mapped to 1 SM (want to round down in this case)
-        unsigned int num_rounds = get_num_rounds(tile_count, threads_tile, machine.num_sms, machine.max_threads_sm); // how many sequential rounds of processing are necessary
+        unsigned int num_rounds = get_num_rounds(tile_count, threads_tile, machine); // how many sequential rounds of processing are necessary
         // TODO: at this point, make adjustments for memory limitations?
 
         std::cout << "Tiles per SM: " << tiles_per_sm << std::endl;
@@ -97,14 +97,14 @@ int main(int argc, char* argv[])
         unsigned int tiles_left = tile_count;
         for (unsigned i=0; i<num_rounds; i++) {
             unsigned int multiplier = (tiles_left < tiles_per_sm) ? 1 : tiles_per_sm; // special check to ensure that we're actually using the tile capacity...
-            cycle_count += (multiplier * tile_op(t, t_i, t_n, elements_per_thread, machine.warp_size));
+            cycle_count += (multiplier * tile_op(t, t_i, t_n, elements_per_thread, machine));
             tiles_left -= (tiles_per_sm * machine.num_sms);
         }
 
         std::cout << "Cycles: " << cycle_count << std::endl;
 
         // compute # of us to run the computation
-        unsigned int time = cycles_to_time(cycle_count, machine.gpu_clock);
+        unsigned int time = cycles_to_time(cycle_count, machine);
 
         std::cout << "Time: " << time << std::endl;
 
