@@ -2,6 +2,7 @@
 #define HELPERS_H
 
 #include "titanv.h"
+#include <iostream>
 
 // compute the theoretical # of tiles necessary given the provided input parameters:
 // input/output dimensions, tile dimensions
@@ -18,10 +19,10 @@ unsigned int get_num_rounds (unsigned int num_tiles, unsigned int threads_tile, 
 // given a vector length, return # cycles to compute vector operation. Can include: addition/multiplication/reduction
 unsigned int vector_op(unsigned int len, TitanV m);
 
-// given the number of accesses, data width, and L2 bandwidth
+// given the number of accesses (total), data width, and L2 bandwidth
 // determine the number of cycles of latency to retrieve/store all necessary data from/to L2 cache
 // use the clock to convert to cycles (from time)
-unsigned int l2_latency(unsigned int num_accesses, TitanV m);
+unsigned int l2_latency(unsigned int num_accesses, unsigned int tiles_round, TitanV m);
 
 // given tile dimensions and the # of elements each thread must process in the tile, 
 // return # cycles to compute the tile associated with those parameters
@@ -36,7 +37,7 @@ unsigned int tile_op_2(unsigned int len, unsigned int ht, unsigned int elems_thr
 // given tile dimensions and the # of elements each thread must process in the tile, 
 // return # cycles to compute the tile associated with those parameters
 // this method assumes all data is already present in L2 cache (but not registers or scratchpad)
-unsigned int tile_op_3(unsigned int len, unsigned int ht, unsigned int elems_thread, TitanV m);
+unsigned int tile_op_3(unsigned int len, unsigned int ht, unsigned int elems_thread, unsigned int tiles_round, unsigned int tiles_sm, TitanV m);
 
 // given # of cycles and a clock rate (MHz)
 // return # of us to execute those cycles

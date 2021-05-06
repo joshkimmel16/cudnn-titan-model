@@ -10,15 +10,15 @@
 enum Type { REGISTER=0, SCRATCHPAD=1, L2=2, MEMORY=3 };
 
 // helper method to call the appropriate analysis methods based on type
-unsigned int tile_op (Type ty, unsigned int len, unsigned int ht, unsigned elems_thread, TitanV m) {
+unsigned int tile_op (Type ty, unsigned int len, unsigned int ht, unsigned elems_thread, unsigned int tiles_round, unsigned int tiles_sm, TitanV m) {
     if (ty == REGISTER) {
         return tile_op_1(len, ht, elems_thread, m);
     }
     else if (ty == SCRATCHPAD) {
         return tile_op_2(len, ht, elems_thread, m);
     }
-    else if (ty == L2) { // TODO: implement tile_op_3
-        return tile_op_1(len, ht, elems_thread, m);
+    else if (ty == L2) {
+        return tile_op_3(len, ht, elems_thread, tiles_round, tiles_sm, m);
     }
     else { // MEMORY (TODO: implement tile_op_4)
         return tile_op_1(len, ht, elems_thread, m);
@@ -86,10 +86,11 @@ int main(int argc, char* argv[])
 
         unsigned int tiles_per_sm = machine.max_threads_sm / threads_tile; // how many tiles can be mapped to 1 SM (want to round down in this case)
         unsigned int num_rounds = get_num_rounds(tile_count, threads_tile, machine); // how many sequential rounds of processing are necessary
-        // TODO: at this point, make adjustments for memory limitations?
+        unsigned int tiles_per_round = (tile_count % num_rounds) == 0 ? tile_count / num_rounds : (tile_count / num_rounds)+1; // how many tiles are processed in a given round
 
         std::cout << "Tiles per SM: " << tiles_per_sm << std::endl;
         std::cout << "Number of rounds: " << num_rounds << std::endl;
+        std::cout << "Tiles per round: " << tiles_per_round << std::endl;
 
         // for each parallel round of processing, compute x tiles
         // where x is the # of tiles mapped to 1 SM
@@ -97,7 +98,7 @@ int main(int argc, char* argv[])
         unsigned int tiles_left = tile_count;
         for (unsigned i=0; i<num_rounds; i++) {
             unsigned int multiplier = (tiles_left < tiles_per_sm) ? 1 : tiles_per_sm; // special check to ensure that we're actually using the tile capacity...
-            cycle_count += (multiplier * tile_op(t, t_i, t_n, elements_per_thread, machine));
+            cycle_count += (multiplier * tile_op(t, t_i, t_n, elements_per_thread, tiles_per_round, tiles_per_sm, machine));
             tiles_left -= (tiles_per_sm * machine.num_sms);
         }
 

@@ -17,18 +17,22 @@ unsigned int get_num_rounds (unsigned int num_tiles, unsigned int threads_tile, 
 // note: this assumes all data required is already present in a register (i.e., ignores memory latency)
 // note: if the op is a memory op, it is assumed to take the same amount of time as other ops
 unsigned int vector_op (unsigned int len, TitanV m) {
-    // assume atomic operations take 1 cycle
-    // actual operation is broken out into atomic operations based on warp size relative to vector length
-    unsigned int num_atomic = 1;
-    return num_atomic * ((len % m.warp_size == 0) ? len/m.warp_size : (len/m.warp_size) + 1);
+    // actual operation is broken out into vector operations based on warp size relative to vector length
+    return m.cpi * ((len % m.warp_size == 0) ? len/m.warp_size : (len/m.warp_size) + 1);
 }
 
-// TODO: this only accounts for a single tile => must also account for the fact that all tiles are hitting the SAME L2
-// TODO: this means an effective linear reduction in l2_bw based on # of concurrent tiles
-unsigned int l2_latency(unsigned int num_accesses, TitanV m) {
+// must account for the concurrent number of tiles that are being worked on in parallel
+// this reduces the effective BW between L2 and scratchpad
+unsigned int l2_latency(unsigned int num_accesses, unsigned int concurrency, TitanV m) {
     unsigned int data_amt = num_accesses * m.val_size; // compute total amount of data that will be transferred
-    unsigned int t_transfer = data_amt / m.l2_bw; // determine time that will take based on L2-scratchpad BW
-    return t_transfer * m.gpu_clock; // convert time to cycles using gpu_clock
+    double t_transfer = (double)data_amt / ((double)m.l2_bw / (double)concurrency); // determine time that will take based on L2-scratchpad BW and concurrency
+    return (int)(t_transfer * m.gpu_clock); // convert time to cycles using gpu_clock
+}
+
+// obtain greatest advtange when working on very many threads in parallel
+unsigned int latency_hide(unsigned int num_threads, TitanV m) {
+    unsigned int adv = num_threads / m.max_threads_sm;
+    return m.max_lat_hide * adv;
 }
 
 // note: this assumes all data required is already present in registers (i.e., ignores memory latency)
@@ -53,7 +57,7 @@ unsigned int tile_op_2 (unsigned int len, unsigned int ht, unsigned elems_thread
 }
 
 // note: this assumes all data required is already present in L2 cache (i.e., ignores memory latency)
-unsigned int tile_op_3 (unsigned int len, unsigned int ht, unsigned elems_thread, TitanV m) {
+unsigned int tile_op_3 (unsigned int len, unsigned int ht, unsigned elems_thread, unsigned int tiles_round, unsigned int tiles_sm, TitanV m) {
     // per row of the weights matrix (ht)
     // must perform: vector-vector multiply, then a vector reduction, then an add to the output = 3 ops
     // # elements per thread effectively increases the length of the "vector"
@@ -64,10 +68,15 @@ unsigned int tile_op_3 (unsigned int len, unsigned int ht, unsigned elems_thread
     unsigned int work = ht * (3 * vector_op(len*elems_thread, m));
     unsigned int store = vector_op(ht, m); // only need to store the output vector once
 
-    // TODO: compute number of accesses, pass to l2_latency
-    // TODO: determine "overlap" of L2 latency and processing work
-
-    return inputs_reads + weights_reads + work + store;
+    // compute nominal latency associated with accesses to L2 cache
+    unsigned int num_access = (inputs_reads + weights_reads + store) / m.cpi; // must normalize based on CPI
+    unsigned int l2_lat = l2_latency(num_access, tiles_round, m);
+    
+    // determine "overlap" of L2 latency and processing work
+    // this is driven by: nominal # of actions => load a bunch, start working, thread in subsequent loads strategically
+    unsigned int l2_lat_obs = l2_lat * latency_hide((tiles_sm*len*ht/elems_thread), m);
+    
+    return inputs_reads + weights_reads + work + store + l2_lat_obs;
 }
 
 unsigned int cycles_to_time(unsigned int cycles, TitanV m) {

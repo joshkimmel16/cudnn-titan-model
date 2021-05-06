@@ -18,6 +18,8 @@ struct TitanV {
     unsigned int shared_cap = 49152 / 1024; // MB's
 
     unsigned int val_size = 8; // bytes (FP64)
+    unsigned int cpi = 1; // # of cycles (in equilibrim) per instruction
+    unsigned int max_lat_hide = 0.8; // at most, 80% of latency can be hidden (TODO: refine this value) 
 
     TitanV(); // default constructor
     
