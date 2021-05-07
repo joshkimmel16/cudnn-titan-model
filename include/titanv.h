@@ -16,7 +16,7 @@ struct TitanV {
     unsigned int num_sms = 80; // # SM's in the system
     unsigned int max_threads_block = 1024; // max # threads per block
     unsigned int max_threads_sm = 2048; // max # threads per block
-    
+
     unsigned int l2_cap = 4718592 / 1024; // MB's
     unsigned int l2_bw = 1000; // => MB/s TODO: what should this be??
     unsigned int l2_lat = 32;
@@ -29,7 +29,7 @@ struct TitanV {
     unsigned int sync_penalty = 500; // # cycles required to synchronize (TODO: refine this value)
 
     TitanV(); // default constructor
-    
+
     /*
     unsigned int load_registers(unsigned int vals); // given the number of data elements to load, return # cycles to load them from scratchpad into registers
     unsigned int load_scratchpad (unsigned int vals); // given the number of data elements to load, return # cycles to load them from L2 into scratchpad
