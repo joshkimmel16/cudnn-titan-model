@@ -24,14 +24,22 @@ unsigned int vector_op (unsigned int len, TitanV m) {
 // must account for the concurrent number of tiles that are being worked on in parallel
 // this reduces the effective BW between L2 and scratchpad
 unsigned int l2_latency(unsigned int num_accesses, unsigned int concurrency, TitanV m) {
-    unsigned int data_amt = num_accesses * m.val_size; // compute total amount of data that will be transferred
-    double t_transfer = (double)data_amt / ((double)m.l2_bw / (double)concurrency); // determine time that will take based on L2-scratchpad BW and concurrency
-    return (int)(t_transfer * m.gpu_clock); // convert time to cycles using gpu_clock
+    unsigned int data_amt = num_accesses * m.warp_size * m.val_size; // compute total amount of data that will be transferred
+    double t_transfer = (double)(data_amt/1024) / ((double)m.l2_bw / (double)concurrency); // determine time that will take based on L2-scratchpad BW and concurrency
+    return (unsigned int)(t_transfer * m.gpu_clock); // convert time to cycles using gpu_clock
+}
+
+// must account for the concurrent number of tiles that are being worked on in parallel
+// this reduces the effective BW between memory and L2
+unsigned int mem_latency(unsigned int num_accesses, unsigned int concurrency, TitanV m) {
+    unsigned int data_amt = num_accesses * m.warp_size * m.val_size; // compute total amount of data that will be transferred
+    double t_transfer = (double)(data_amt/1024) / ((double)m.global_mem_bw / (double)concurrency); // determine time that will take based on mem-L2 BW and concurrency
+    return (unsigned int)(t_transfer * m.gpu_clock); // convert time to cycles using gpu_clock
 }
 
 // obtain greatest advtange when working on very many threads in parallel
-unsigned int latency_hide(unsigned int num_threads, TitanV m) {
-    unsigned int adv = num_threads / m.max_threads_sm;
+double latency_hide(unsigned int num_threads, TitanV m) {
+    double adv = num_threads / m.max_threads_sm;
     return m.max_lat_hide * adv;
 }
 
@@ -74,9 +82,35 @@ unsigned int tile_op_3 (unsigned int len, unsigned int ht, unsigned elems_thread
     
     // determine "overlap" of L2 latency and processing work
     // this is driven by: nominal # of actions => load a bunch, start working, thread in subsequent loads strategically
-    unsigned int l2_lat_obs = l2_lat * latency_hide((tiles_sm*len*ht/elems_thread), m);
+    unsigned int l2_lat_obs = (unsigned int)((double)l2_lat * latency_hide((tiles_sm*len*ht/elems_thread), m));
     
     return inputs_reads + weights_reads + work + store + l2_lat_obs;
+}
+
+unsigned int tile_op_4 (unsigned int len, unsigned int ht, unsigned elems_thread, unsigned int tiles_round, unsigned int tiles_sm, TitanV m) {
+    // per row of the weights matrix (ht)
+    // must perform: vector-vector multiply, then a vector reduction, then an add to the output = 3 ops
+    // # elements per thread effectively increases the length of the "vector"
+    // must also load all vectors into vector registers and store result
+    // in addition, must account for latency of loads and stores from L2 => some of which is hidden by working on other ops
+    unsigned int inputs_reads = vector_op(len, m); // only need to read the input vector once
+    unsigned int weights_reads = ht * inputs_reads; // must read (ht) weights vectors
+    unsigned int work = ht * (3 * vector_op(len*elems_thread, m));
+    unsigned int store = vector_op(ht, m); // only need to store the output vector once
+
+    // compute nominal latency associated with accesses to L2 cache
+    unsigned int num_access = (inputs_reads + weights_reads + store) / m.cpi; // must normalize based on CPI
+    unsigned int l2_lat = l2_latency(num_access, tiles_round, m);
+    unsigned int mem_lat = mem_latency(num_access, tiles_round, m);
+
+    
+    std::cout << "l2_lat: " << l2_lat << std::endl;
+    
+    // determine "overlap" of L2 latency and processing work
+    // this is driven by: nominal # of actions => load a bunch, start working, thread in subsequent loads strategically
+    unsigned int lat_obs = (unsigned int)((double)(l2_lat + mem_lat) * latency_hide((tiles_sm*len*ht/elems_thread), m));
+    
+    return inputs_reads + weights_reads + work + store + lat_obs;
 }
 
 unsigned int cycles_to_time(unsigned int cycles, TitanV m) {

@@ -20,8 +20,8 @@ unsigned int tile_op (Type ty, unsigned int len, unsigned int ht, unsigned elems
     else if (ty == L2) {
         return tile_op_3(len, ht, elems_thread, tiles_round, tiles_sm, m);
     }
-    else { // MEMORY (TODO: implement tile_op_4)
-        return tile_op_1(len, ht, elems_thread, m);
+    else {
+        return tile_op_4(len, ht, elems_thread, tiles_round, tiles_sm, m);
     }
 }
 
@@ -29,7 +29,7 @@ unsigned int n_i = 1024; // dimension of input vector (default = 1024)
 unsigned int n_n = 1024; // dimension of output vector (default = 1024)
 unsigned int t_i = 32; // tile width (default = 32)
 unsigned int t_n = 32; // tile height (default = 32)
-Type t = REGISTER; // which type of analysis to run (default=REGISTER)
+Type t = MEMORY; // which type of analysis to run (default=MEMORY)
 
 int main(int argc, char* argv[]) 
 {

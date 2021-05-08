@@ -3,7 +3,7 @@
 
 struct TitanV {
     unsigned int global_mem_cap = 12037; // MB's
-    unsigned int global_mem_bw = (3072/8) * 850; // bus width (in bytes) multiplied by clock (in MHz) => MB/s
+    unsigned int global_mem_bw = (3072/8) * 1 * 850; // bus width (bytes) * cycles/transfer (this value is an assumption!) * bus clock (M cycles/s) = MB/s
     
     unsigned int num_cores = 5120; // # cores
     unsigned int gpu_clock = 1455; // MHz
@@ -13,13 +13,13 @@ struct TitanV {
     unsigned int max_threads_sm = 2048; // max # threads per block
     
     unsigned int l2_cap = 4718592 / 1024; // MB's
-    unsigned int l2_bw = 100; // => MB/s TODO: what should this be??
+    unsigned int l2_bw = 1000; // => MB/s TODO: what should this be??
     unsigned int constant_cap = 65536 / 1024; // MB's
     unsigned int shared_cap = 49152 / 1024; // MB's
 
     unsigned int val_size = 8; // bytes (FP64)
     unsigned int cpi = 1; // # of cycles (in equilibrim) per instruction
-    unsigned int max_lat_hide = 0.8; // at most, 80% of latency can be hidden (TODO: refine this value) 
+    double max_lat_hide = 0.8; // at most, 80% of latency can be hidden (TODO: refine this value) 
 
     TitanV(); // default constructor
     
