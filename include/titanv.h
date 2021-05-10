@@ -1,9 +1,12 @@
 #ifndef TITANV_H
 #define TITANV_H
 
+// references:
+// https://www.techpowerup.com/gpu-specs/titan-v.c3051 => global memory bandwidth reported implies DDR (0.5 cycles/transfer)
+
 struct TitanV {
     unsigned int global_mem_cap = 12037; // MB's
-    unsigned int global_mem_bw = (3072/8) / 20 * 850; // bus width (bytes)/transfer / cycles/transfer (this value is an assumption!) * bus clock (M cycles/s) = MB/s
+    unsigned int global_mem_bw = (3072/8) * 2 * 850; // bus width (bytes)/transfer / cycles/transfer (this value is an assumption!) * bus clock (M cycles/s) = MB/s
     
     unsigned int num_cores = 5120; // # cores
     unsigned int gpu_clock = 1455; // MHz

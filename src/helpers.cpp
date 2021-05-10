@@ -25,9 +25,6 @@ unsigned int vector_op (unsigned int len, TitanV m) {
 // this reduces the effective BW between L2 and scratchpad
 unsigned int l2_latency(unsigned int num_accesses, unsigned int concurrency, TitanV m) {
     unsigned int data_amt = num_accesses * m.warp_size * m.val_size; // compute total amount of data that will be transferred
-    //std::cout << "data_amt: " << data_amt << std::endl;
-    //std::cout << "data_amt_mb: " << (double)data_amt/(1024*1024) << std::endl;
-    //std::cout << "eff_bw: " << (double)m.l2_bw/(double)concurrency << std::endl;
     double t_transfer = ((double)data_amt/(1024*1024)) / ((double)m.l2_bw / (double)concurrency); // determine time that will take based on L2-scratchpad BW and concurrency
     return (unsigned int)(t_transfer * m.gpu_clock + 0.5); // convert time to cycles using gpu_clock
 }
@@ -81,7 +78,7 @@ unsigned int tile_op_3 (unsigned int len, unsigned int ht, unsigned elems_thread
 
     // compute nominal latency associated with accesses to L2 cache
     unsigned int num_access = (inputs_reads + weights_reads + store) / m.cpi; // must normalize based on CPI
-    unsigned int l2_lat = l2_latency(num_access, tiles_round, m);
+    unsigned int l2_lat = l2_latency(num_access, tiles_round, m) * tiles_round;
     
     // determine "overlap" of L2 latency and processing work
     // this is driven by: nominal # of actions => load a bunch, start working, thread in subsequent loads strategically
@@ -103,16 +100,17 @@ unsigned int tile_op_4 (unsigned int len, unsigned int ht, unsigned elems_thread
 
     // compute nominal latency associated with accesses to L2 cache
     unsigned int num_access = (inputs_reads + weights_reads + store) / m.cpi; // must normalize based on CPI
-    unsigned int l2_lat = l2_latency(num_access, tiles_round, m);
-    unsigned int mem_lat = mem_latency(num_access, tiles_round, m);
+    unsigned int l2_lat = l2_latency(num_access, tiles_round, m) * tiles_round;
+    unsigned int mem_lat = mem_latency(num_access, tiles_round, m) * tiles_round;
 
-    
     //std::cout << "l2_lat: " << l2_lat << std::endl;
     //std::cout << "mem_lat: " << mem_lat << std::endl;
     
     // determine "overlap" of L2 latency and processing work
     // this is driven by: nominal # of actions => load a bunch, start working, thread in subsequent loads strategically
     unsigned int lat_obs = (unsigned int)((double)(l2_lat + mem_lat) * latency_hide((tiles_sm*len*ht/elems_thread), m));
+
+    //std::cout << "lat_obs: " << lat_obs << std::endl;
     
     return inputs_reads + weights_reads + work + store + lat_obs;
 }
