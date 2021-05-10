@@ -25,16 +25,19 @@ unsigned int vector_op (unsigned int len, TitanV m) {
 // this reduces the effective BW between L2 and scratchpad
 unsigned int l2_latency(unsigned int num_accesses, unsigned int concurrency, TitanV m) {
     unsigned int data_amt = num_accesses * m.warp_size * m.val_size; // compute total amount of data that will be transferred
-    double t_transfer = (double)(data_amt/1024) / ((double)m.l2_bw / (double)concurrency); // determine time that will take based on L2-scratchpad BW and concurrency
-    return (unsigned int)(t_transfer * m.gpu_clock); // convert time to cycles using gpu_clock
+    //std::cout << "data_amt: " << data_amt << std::endl;
+    //std::cout << "data_amt_mb: " << (double)data_amt/(1024*1024) << std::endl;
+    //std::cout << "eff_bw: " << (double)m.l2_bw/(double)concurrency << std::endl;
+    double t_transfer = ((double)data_amt/(1024*1024)) / ((double)m.l2_bw / (double)concurrency); // determine time that will take based on L2-scratchpad BW and concurrency
+    return (unsigned int)(t_transfer * m.gpu_clock + 0.5); // convert time to cycles using gpu_clock
 }
 
 // must account for the concurrent number of tiles that are being worked on in parallel
 // this reduces the effective BW between memory and L2
 unsigned int mem_latency(unsigned int num_accesses, unsigned int concurrency, TitanV m) {
     unsigned int data_amt = num_accesses * m.warp_size * m.val_size; // compute total amount of data that will be transferred
-    double t_transfer = (double)(data_amt/1024) / ((double)m.global_mem_bw / (double)concurrency); // determine time that will take based on mem-L2 BW and concurrency
-    return (unsigned int)(t_transfer * m.gpu_clock); // convert time to cycles using gpu_clock
+    double t_transfer = ((double)data_amt/(1024*1024)) / ((double)m.global_mem_bw / (double)concurrency); // determine time that will take based on mem-L2 BW and concurrency
+    return (unsigned int)(t_transfer * m.gpu_clock + 0.5); // convert time to cycles using gpu_clock
 }
 
 // obtain greatest advtange when working on very many threads in parallel
@@ -104,7 +107,8 @@ unsigned int tile_op_4 (unsigned int len, unsigned int ht, unsigned elems_thread
     unsigned int mem_lat = mem_latency(num_access, tiles_round, m);
 
     
-    std::cout << "l2_lat: " << l2_lat << std::endl;
+    //std::cout << "l2_lat: " << l2_lat << std::endl;
+    //std::cout << "mem_lat: " << mem_lat << std::endl;
     
     // determine "overlap" of L2 latency and processing work
     // this is driven by: nominal # of actions => load a bunch, start working, thread in subsequent loads strategically

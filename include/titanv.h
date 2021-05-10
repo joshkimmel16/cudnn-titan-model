@@ -3,7 +3,7 @@
 
 struct TitanV {
     unsigned int global_mem_cap = 12037; // MB's
-    unsigned int global_mem_bw = (3072/8) * 1 * 850; // bus width (bytes) * cycles/transfer (this value is an assumption!) * bus clock (M cycles/s) = MB/s
+    unsigned int global_mem_bw = (3072/8) / 20 * 850; // bus width (bytes)/transfer / cycles/transfer (this value is an assumption!) * bus clock (M cycles/s) = MB/s
     
     unsigned int num_cores = 5120; // # cores
     unsigned int gpu_clock = 1455; // MHz
