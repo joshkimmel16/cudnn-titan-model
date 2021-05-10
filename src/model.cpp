@@ -7,7 +7,7 @@
 #include <string.h>
 #include <exception>
 
-enum Type { REGISTER=0, SCRATCHPAD=1, L2=2, MEMORY=3 };
+enum Type { REGISTER=0, SCRATCHPAD=1, L2=2, MEMORY=3, RANDOM_MEMORY=4};
 
 // helper method to call the appropriate analysis methods based on type
 unsigned int tile_op (Type ty, unsigned int len, unsigned int ht, unsigned elems_thread, unsigned int tiles_round, unsigned int tiles_sm, TitanV m) {
@@ -20,8 +20,11 @@ unsigned int tile_op (Type ty, unsigned int len, unsigned int ht, unsigned elems
     else if (ty == L2) {
         return tile_op_3(len, ht, elems_thread, tiles_round, tiles_sm, m);
     }
-    else {
+    else if (ty == MEMORY) {
         return tile_op_4(len, ht, elems_thread, tiles_round, tiles_sm, m);
+    }
+    else {
+	return tile_op_5(len, ht, elems_thread, tiles_round, tiles_sm, m);
     }
 }
 

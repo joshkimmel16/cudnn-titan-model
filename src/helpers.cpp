@@ -82,7 +82,6 @@ unsigned int tile_op_3 (unsigned int len, unsigned int ht, unsigned elems_thread
     // compute nominal latency associated with accesses to L2 cache
     unsigned int num_access = (inputs_reads + weights_reads + store) / m.cpi; // must normalize based on CPI
     unsigned int l2_lat = l2_latency(num_access, tiles_round, m);
-    
     // determine "overlap" of L2 latency and processing work
     // this is driven by: nominal # of actions => load a bunch, start working, thread in subsequent loads strategically
     unsigned int l2_lat_obs = (unsigned int)((double)l2_lat * latency_hide((tiles_sm*len*ht/elems_thread), m));
@@ -117,6 +116,30 @@ unsigned int tile_op_4 (unsigned int len, unsigned int ht, unsigned elems_thread
     return inputs_reads + weights_reads + work + store + lat_obs;
 }
 
+
+unsigned int tile_op_5 (unsigned int len, unsigned int ht, unsigned elems_thread, unsigned int tiles_round, unsigned int tiles_sm, TitanV m) {
+    unsigned int inputs_reads = vector_op(len, m); // only need to read the input vector once
+    unsigned int weights_reads = ht * inputs_reads; // must read (ht) weights vectors
+    unsigned int work = ht * (3 * vector_op(len*elems_thread, m));
+    unsigned int store = vector_op(ht, m); // only need to store the output vector once
+
+    // compute nominal latency associated with accesses to L2 cache
+    unsigned int num_access = (inputs_reads + weights_reads + store) / m.cpi; // must normalize based on CPI
+    unsigned int l2_lat = l2_latency(num_access, tiles_round, m);
+    unsigned int mem_lat = mem_latency(num_access, tiles_round, m);
+
+    double p = (double) m.l2_cap/(num_access * m.warp_size * m.val_size);
+    double total_lat = (p >= 1) ? (double) l2_lat : (double)(p * l2_lat + (1 - p) * (l2_lat + mem_lat));
+    unsigned int lat_obs = (unsigned int)(total_lat * latency_hide((tiles_sm * len * ht/elems_thread), m));
+    std::cout << "p: " << p << std::endl; 
+    std::cout << "l2_lat: " << l2_lat << std::endl;
+    std::cout << "mem_lat: " << mem_lat << std::endl;
+    std::cout << "total_lat: " << total_lat << std::endl;
+    std::cout << "l2_cap: " << m.l2_cap << std::endl;
+    std::cout << "access size: " << num_access * m.warp_size * m.val_size << std::endl;
+    return inputs_reads + weights_reads + work + store + lat_obs;
+}
+	
 unsigned int cycles_to_time(unsigned int cycles, TitanV m) {
     return cycles / m.gpu_clock; // because we are reporting in us
 }

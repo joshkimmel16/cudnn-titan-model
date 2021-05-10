@@ -50,6 +50,8 @@ unsigned int tile_op_3(unsigned int len, unsigned int ht, unsigned int elems_thr
 // TODO: relax infinite capacity assumption
 unsigned int tile_op_4(unsigned int len, unsigned int ht, unsigned int elems_thread, unsigned int tiles_round, unsigned int tiles_sm, TitanV m);
 
+unsigned int tile_op_5(unsigned int len, unsigned int ht, unsigned int elems_thread, unsigned int tiles_round, unsigned int tiles_sm, TitanV m);
+
 // given # of cycles and a clock rate (MHz)
 // return # of us to execute those cycles
 unsigned int cycles_to_time(unsigned int cycles, TitanV m);
