@@ -22,7 +22,8 @@ struct TitanV {
 
     unsigned int val_size = 8; // bytes (FP64)
     unsigned int cpi = 1; // # of cycles (in equilibrim) per instruction
-    double max_lat_hide = 0.8; // at most, 80% of latency can be hidden (TODO: refine this value) 
+    double max_lat_hide = 0.8; // at most, 80% of latency can be hidden (TODO: refine this value)
+    unsigned int sync_penalty = 500; // # cycles required to synchronize (TODO: refine this value)
 
     TitanV(); // default constructor
     

@@ -29,6 +29,14 @@ unsigned int l2_latency(unsigned int num_accesses, unsigned int tiles_round, Tit
 // use the clock to convert to cycles (from time)
 unsigned int mem_latency(unsigned int num_accesses, unsigned int tiles_round, TitanV m);
 
+// given the number of concurrent threads working in a thread block and machine parameters
+// determine how much of the memory access latency can be hidden by strategically executing ready threads
+double latency_hide(unsigned int num_threads, TitanV m);
+
+// given the # of thread blocks that must be synchronized and machine parameters
+// determine the # of extra cycles that must be devoted to synchronization across thread blocks
+unsigned int sync_latency(unsigned int num_sync, TitanV m);
+
 // given tile dimensions and the # of elements each thread must process in the tile, 
 // return # cycles to compute the tile associated with those parameters
 // this method assumes all data is already present in registers
@@ -42,13 +50,13 @@ unsigned int tile_op_2(unsigned int len, unsigned int ht, unsigned int elems_thr
 // given tile dimensions and the # of elements each thread must process in the tile, 
 // return # cycles to compute the tile associated with those parameters
 // this method assumes all data is already present in L2 cache (but not registers or scratchpad)
-unsigned int tile_op_3(unsigned int len, unsigned int ht, unsigned int elems_thread, unsigned int tiles_round, unsigned int tiles_sm, TitanV m);
-
+unsigned int tile_op_3(unsigned int len, unsigned int ht, unsigned int elems_thread, unsigned int tiles_round, unsigned int tiles_sm, unsigned int tile_overlap, TitanV m);
+ 
 // given tile dimensions and the # of elements each thread must process in the tile, 
 // return # cycles to compute the tile associated with those parameters
 // this method assumes all data is already present in memory, L2 cache has infinite capacity
 // TODO: relax infinite capacity assumption
-unsigned int tile_op_4(unsigned int len, unsigned int ht, unsigned int elems_thread, unsigned int tiles_round, unsigned int tiles_sm, TitanV m);
+unsigned int tile_op_4(unsigned int len, unsigned int ht, unsigned int elems_thread, unsigned int tiles_round, unsigned int tiles_sm, unsigned int tile_overlap, TitanV m);
 
 // given # of cycles and a clock rate (MHz)
 // return # of us to execute those cycles
