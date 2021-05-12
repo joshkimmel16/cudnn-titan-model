@@ -91,7 +91,7 @@ unsigned int tile_op_3 (unsigned int len, unsigned int ht, unsigned elems_thread
 
     // compute nominal latency associated with accesses to L2 cache
     unsigned int num_access = (inputs_reads + weights_reads + store) / m.cpi; // must normalize based on CPI
-    unsigned int l2_lat = l2_latency(num_access, tiles_round, m) * tiles_round;
+    unsigned int l2_lat = l2_latency(num_access, tiles_round, m);
     
     // determine "overlap" of L2 latency and processing work
     // this is driven by: nominal # of actions => load a bunch, start working, thread in subsequent loads strategically
