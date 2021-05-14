@@ -7,10 +7,10 @@
 #include <string.h>
 #include <exception>
 
-enum Type { REGISTER=0, SCRATCHPAD=1, L2=2, MEMORY=3, RANDOM_MEMORY=4};
+enum Type { REGISTER=0, SCRATCHPAD=1, L2=2, MEMORY=3, CONTENTION=4};
 
 // helper method to call the appropriate analysis methods based on type
-unsigned int tile_op (Type ty, unsigned int len, unsigned int ht, unsigned elems_thread, unsigned int tiles_round, unsigned int tiles_sm, TitanV m) {
+unsigned int tile_op (Type ty, unsigned int len, unsigned int ht, unsigned elems_thread, unsigned int tiles_round, unsigned int tiles_sm, unsigned int tile_overlap, unsigned int num_threads, TitanV m) {
     if (ty == REGISTER) {
         return tile_op_1(len, ht, elems_thread, m);
     }
@@ -18,13 +18,13 @@ unsigned int tile_op (Type ty, unsigned int len, unsigned int ht, unsigned elems
         return tile_op_2(len, ht, elems_thread, m);
     }
     else if (ty == L2) {
-        return tile_op_3(len, ht, elems_thread, tiles_round, tiles_sm, m);
+        return tile_op_3(len, ht, elems_thread, tiles_round, tiles_sm, tile_overlap, m);
     }
     else if (ty == MEMORY) {
-        return tile_op_4(len, ht, elems_thread, tiles_round, tiles_sm, m);
+        return tile_op_4(len, ht, elems_thread, tiles_round, tiles_sm, tile_overlap, m);
     }
-    else {
-	return tile_op_5(len, ht, elems_thread, tiles_round, tiles_sm, m);
+    else {	
+	return tile_op_5(len, ht, elems_thread, tiles_round, tiles_sm, tile_overlap, num_threads, m);
     }
 }
 
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
             threads_tile = tmp_threads;
             elements_per_thread = out;
         }
-
+	
         std::cout << "Tile count: " << tile_count << std::endl;
         std::cout << "Threads per tile: " << threads_tile << std::endl;
         std::cout << "Elements per thread: " << elements_per_thread << std::endl;
@@ -90,18 +90,21 @@ int main(int argc, char* argv[])
         unsigned int tiles_per_sm = machine.max_threads_sm / threads_tile; // how many tiles can be mapped to 1 SM (want to round down in this case)
         unsigned int num_rounds = get_num_rounds(tile_count, threads_tile, machine); // how many sequential rounds of processing are necessary
         unsigned int tiles_per_round = (tile_count % num_rounds) == 0 ? tile_count / num_rounds : (tile_count / num_rounds)+1; // how many tiles are processed in a given round
+        unsigned int tile_overlap = tiles_per_round / (n_n / t_n); // how many tiles must concurrently work on the same output (assume tiles mapped in col-major order)
+	unsigned int num_threads = threads_tile * tile_count; //Number of total threads running
 
         std::cout << "Tiles per SM: " << tiles_per_sm << std::endl;
         std::cout << "Number of rounds: " << num_rounds << std::endl;
         std::cout << "Tiles per round: " << tiles_per_round << std::endl;
-
+        std::cout << "Tile Overlap: " << tile_overlap << std::endl;
+	std::cout << "Number of threads: " << num_threads << std::endl;
         // for each parallel round of processing, compute x tiles
         // where x is the # of tiles mapped to 1 SM
         unsigned int cycle_count = 0;
         unsigned int tiles_left = tile_count;
         for (unsigned i=0; i<num_rounds; i++) {
             unsigned int multiplier = (tiles_left < tiles_per_sm) ? 1 : tiles_per_sm; // special check to ensure that we're actually using the tile capacity...
-            cycle_count += (multiplier * tile_op(t, t_i, t_n, elements_per_thread, tiles_per_round, tiles_per_sm, machine));
+            cycle_count += (multiplier * tile_op(t, t_i, t_n, elements_per_thread, tiles_per_round, tiles_per_sm, tile_overlap, num_threads, machine));
             tiles_left -= (tiles_per_sm * machine.num_sms);
         }
 
