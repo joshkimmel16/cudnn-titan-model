@@ -9,7 +9,6 @@ Tiles per SM: 32
 Number of rounds: 7
 Tiles per round: 2341
 Tile Overlap: 18
-Number of threads: 1048576
 Cycles: 2032800
 Time: 1397
 
@@ -21,9 +20,8 @@ Tiles per SM: 21
 Number of rounds: 7
 Tiles per round: 1555
 Tile Overlap: 12
-Number of threads: 1044480
-Cycles: 891702
-Time: 612
+Cycles: 896406
+Time: 616
 
 height is 8, width is 16
 Tile count: 8192
@@ -33,7 +31,6 @@ Tiles per SM: 16
 Number of rounds: 7
 Tiles per round: 1171
 Tile Overlap: 9
-Number of threads: 1048576
 Cycles: 512400
 Time: 352
 
@@ -45,9 +42,8 @@ Tiles per SM: 10
 Number of rounds: 7
 Tiles per round: 768
 Tile Overlap: 6
-Number of threads: 1032192
-Cycles: 214620
-Time: 147
+Cycles: 216860
+Time: 149
 
 height is 8, width is 32
 Tile count: 4096
@@ -57,7 +53,6 @@ Tiles per SM: 8
 Number of rounds: 7
 Tiles per round: 586
 Tile Overlap: 4
-Number of threads: 1048576
 Cycles: 116200
 Time: 79
 
@@ -69,7 +64,6 @@ Tiles per SM: 4
 Number of rounds: 7
 Tiles per round: 293
 Tile Overlap: 2
-Number of threads: 1048576
 Cycles: 32200
 Time: 22
 
@@ -81,9 +75,8 @@ Tiles per SM: 14
 Number of rounds: 7
 Tiles per round: 1033
 Tile Overlap: 12
-Number of threads: 1040400
-Cycles: 597604
-Time: 410
+Cycles: 600740
+Time: 412
 
 height is 12, width is 16
 Tile count: 5440
@@ -93,9 +86,8 @@ Tiles per SM: 10
 Number of rounds: 7
 Tiles per round: 778
 Tile Overlap: 9
-Number of threads: 1044480
-Cycles: 321860
-Time: 221
+Cycles: 324100
+Time: 222
 
 height is 12, width is 24
 Tile count: 3570
@@ -105,9 +97,8 @@ Tiles per SM: 7
 Number of rounds: 7
 Tiles per round: 510
 Tile Overlap: 6
-Number of threads: 1028160
-Cycles: 151802
-Time: 104
+Cycles: 153370
+Time: 105
 
 height is 12, width is 32
 Tile count: 2720
@@ -117,9 +108,8 @@ Tiles per SM: 5
 Number of rounds: 7
 Tiles per round: 389
 Tile Overlap: 4
-Number of threads: 1044480
-Cycles: 73430
-Time: 50
+Cycles: 74550
+Time: 51
 
 height is 12, width is 64
 Tile count: 1360
@@ -129,9 +119,8 @@ Tiles per SM: 2
 Number of rounds: 9
 Tiles per round: 152
 Tile Overlap: 1
-Number of threads: 1044480
-Cycles: 12510
-Time: 8
+Cycles: 16686
+Time: 11
 
 height is 16, width is 16
 Tile count: 4096
@@ -141,7 +130,6 @@ Tiles per SM: 8
 Number of rounds: 7
 Tiles per round: 586
 Tile Overlap: 9
-Number of threads: 1048576
 Cycles: 259784
 Time: 178
 
@@ -153,9 +141,8 @@ Tiles per SM: 5
 Number of rounds: 7
 Tiles per round: 384
 Tile Overlap: 6
-Number of threads: 1032192
-Cycles: 109550
-Time: 75
+Cycles: 110670
+Time: 76
 
 height is 16, width is 32
 Tile count: 2048
@@ -165,7 +152,6 @@ Tiles per SM: 4
 Number of rounds: 7
 Tiles per round: 293
 Tile Overlap: 4
-Number of threads: 1048576
 Cycles: 59892
 Time: 41
 
@@ -177,7 +163,6 @@ Tiles per SM: 2
 Number of rounds: 7
 Tiles per round: 147
 Tile Overlap: 2
-Number of threads: 1048576
 Cycles: 18984
 Time: 13
 
@@ -189,9 +174,8 @@ Tiles per SM: 3
 Number of rounds: 8
 Tiles per round: 221
 Tile Overlap: 5
-Number of threads: 1016064
-Cycles: 64656
-Time: 44
+Cycles: 69840
+Time: 48
 
 height is 24, width is 32
 Tile count: 1344
@@ -201,9 +185,8 @@ Tiles per SM: 2
 Number of rounds: 9
 Tiles per round: 150
 Tile Overlap: 3
-Number of threads: 1032192
-Cycles: 30492
-Time: 20
+Cycles: 34380
+Time: 23
 
 height is 24, width is 64
 Tile count: 672
@@ -213,9 +196,8 @@ Tiles per SM: 2
 Number of rounds: 5
 Tiles per round: 135
 Tile Overlap: 3
-Number of threads: 516096
-Cycles: 22230
-Time: 15
+Cycles: 26430
+Time: 18
 
 height is 32, width is 32
 Tile count: 1024
@@ -225,7 +207,6 @@ Tiles per SM: 2
 Number of rounds: 7
 Tiles per round: 147
 Tile Overlap: 4
-Number of threads: 1048576
 Cycles: 32928
 Time: 22
 
@@ -237,7 +218,6 @@ Tiles per SM: 2
 Number of rounds: 4
 Tiles per round: 128
 Tile Overlap: 4
-Number of threads: 524288
 Cycles: 24832
 Time: 17
 
@@ -249,7 +229,6 @@ Tiles per SM: 2
 Number of rounds: 2
 Tiles per round: 128
 Tile Overlap: 8
-Number of threads: 262144
 Cycles: 31524
 Time: 21
 
@@ -264,7 +243,6 @@ Tiles per SM: 2
 Number of rounds: 13
 Tiles per round: 158
 Tile Overlap: 9
-Number of threads: 2097152
 Cycles: 126152
 Time: 86
 
@@ -276,7 +254,6 @@ Tiles per SM: 2
 Number of rounds: 26
 Tiles per round: 158
 Tile Overlap: 4
-Number of threads: 4194304
 Cycles: 122304
 Time: 84
 
@@ -288,7 +265,6 @@ Tiles per SM: 2
 Number of rounds: 52
 Tiles per round: 158
 Tile Overlap: 2
-Number of threads: 8388608
 Cycles: 140608
 Time: 96
 
@@ -300,7 +276,6 @@ Tiles per SM: 2
 Number of rounds: 26
 Tiles per round: 158
 Tile Overlap: 9
-Number of threads: 4194304
 Cycles: 252304
 Time: 173
 
@@ -312,7 +287,6 @@ Tiles per SM: 2
 Number of rounds: 52
 Tiles per round: 158
 Tile Overlap: 4
-Number of threads: 8388608
 Cycles: 244608
 Time: 168
 
@@ -324,7 +298,6 @@ Tiles per SM: 2
 Number of rounds: 103
 Tiles per round: 160
 Tile Overlap: 2
-Number of threads: 16777216
 Cycles: 278512
 Time: 191
 
@@ -336,7 +309,6 @@ Tiles per SM: 2
 Number of rounds: 205
 Tiles per round: 160
 Tile Overlap: 1
-Number of threads: 33554432
 Cycles: 349320
 Time: 240
 
@@ -348,7 +320,6 @@ Tiles per SM: 2
 Number of rounds: 52
 Tiles per round: 158
 Tile Overlap: 9
-Number of threads: 8388608
 Cycles: 504608
 Time: 346
 
@@ -360,7 +331,6 @@ Tiles per SM: 2
 Number of rounds: 103
 Tiles per round: 160
 Tile Overlap: 5
-Number of threads: 16777216
 Cycles: 587512
 Time: 403
 
@@ -372,7 +342,6 @@ Tiles per SM: 2
 Number of rounds: 205
 Tiles per round: 160
 Tile Overlap: 2
-Number of threads: 33554432
 Cycles: 554320
 Time: 380
 
@@ -384,21 +353,8 @@ Tiles per SM: 2
 Number of rounds: 410
 Tiles per round: 160
 Tile Overlap: 1
-Number of threads: 67108864
 Cycles: 698640
 Time: 480
-
-input_size is 16384, output_size is 8192
-Tile count: 131072
-Threads per tile: 1024
-Elements per thread: 1
-Tiles per SM: 2
-Number of rounds: 820
-Tiles per round: 160
-Tile Overlap: 0
-Number of threads: 134217728
-Cycles: 577280
-Time: 396
 
 input_size is 25088, output_size is 512
 Tile count: 12544
@@ -408,7 +364,6 @@ Tiles per SM: 2
 Number of rounds: 79
 Tiles per round: 159
 Tile Overlap: 9
-Number of threads: 12845056
 Cycles: 766616
 Time: 526
 
@@ -420,7 +375,6 @@ Tiles per SM: 2
 Number of rounds: 157
 Tiles per round: 160
 Tile Overlap: 5
-Number of threads: 25690112
 Cycles: 895528
 Time: 615
 
@@ -432,7 +386,6 @@ Tiles per SM: 2
 Number of rounds: 314
 Tiles per round: 160
 Tile Overlap: 2
-Number of threads: 51380224
 Cycles: 849056
 Time: 583
 
@@ -444,21 +397,8 @@ Tiles per SM: 2
 Number of rounds: 628
 Tiles per round: 160
 Tile Overlap: 1
-Number of threads: 102760448
 Cycles: 1070112
 Time: 735
-
-input_size is 25088, output_size is 8192
-Tile count: 200704
-Threads per tile: 1024
-Elements per thread: 1
-Tiles per SM: 2
-Number of rounds: 1255
-Tiles per round: 160
-Tile Overlap: 0
-Number of threads: 205520896
-Cycles: 883520
-Time: 607
 
 input_size is 65536, output_size is 512
 Tile count: 32768
@@ -468,7 +408,6 @@ Tiles per SM: 2
 Number of rounds: 205
 Tiles per round: 160
 Tile Overlap: 10
-Number of threads: 33554432
 Cycles: 2194320
 Time: 1508
 
@@ -480,7 +419,6 @@ Tiles per SM: 2
 Number of rounds: 410
 Tiles per round: 160
 Tile Overlap: 5
-Number of threads: 67108864
 Cycles: 2338640
 Time: 1607
 
@@ -492,7 +430,6 @@ Tiles per SM: 2
 Number of rounds: 820
 Tiles per round: 160
 Tile Overlap: 2
-Number of threads: 134217728
 Cycles: 2217280
 Time: 1523
 
@@ -504,21 +441,8 @@ Tiles per SM: 2
 Number of rounds: 1639
 Tiles per round: 160
 Tile Overlap: 1
-Number of threads: 268435456
 Cycles: 2792856
 Time: 1919
-
-input_size is 65536, output_size is 8192
-Tile count: 524288
-Threads per tile: 1024
-Elements per thread: 1
-Tiles per SM: 2
-Number of rounds: 3277
-Tiles per round: 160
-Tile Overlap: 0
-Number of threads: 536870912
-Cycles: 2307008
-Time: 1585
 
 input_size is 131072, output_size is 512
 Tile count: 65536
@@ -528,7 +452,6 @@ Tiles per SM: 2
 Number of rounds: 410
 Tiles per round: 160
 Tile Overlap: 10
-Number of threads: 67108864
 Cycles: 4388640
 Time: 3016
 
@@ -540,7 +463,6 @@ Tiles per SM: 2
 Number of rounds: 820
 Tiles per round: 160
 Tile Overlap: 5
-Number of threads: 134217728
 Cycles: 4677280
 Time: 3214
 
@@ -552,7 +474,6 @@ Tiles per SM: 2
 Number of rounds: 1639
 Tiles per round: 160
 Tile Overlap: 2
-Number of threads: 268435456
 Cycles: 4431856
 Time: 3045
 
@@ -564,19 +485,6 @@ Tiles per SM: 2
 Number of rounds: 3277
 Tiles per round: 160
 Tile Overlap: 1
-Number of threads: 536870912
 Cycles: 5584008
 Time: 3837
-
-input_size is 131072, output_size is 8192
-Tile count: 1048576
-Threads per tile: 1024
-Elements per thread: 1
-Tiles per SM: 2
-Number of rounds: 6554
-Tiles per round: 160
-Tile Overlap: 0
-Number of threads: 1073741824
-Cycles: 4614016
-Time: 3171
 

@@ -26,7 +26,7 @@ echo "input/output vector size experiments"
 echo "----------------------------------------------"
 
 NI=(4096 8192 16384 25088 65536 131072)
-NN=(512 1024 2048 4096 8192)
+NN=(512 1024 2048 4096)
 
 for input_size in "${NI[@]}"
 do
@@ -63,22 +63,18 @@ done
 # std::make_tuple(16384, 1, 1024, false, false),
 # std::make_tuple(16384, 1, 2048, false, false),
 # std::make_tuple(16384, 1, 4096, false, false),
-# std::make_tuple(16384, 1, 8192, false, false),
 # std::make_tuple(25088, 1, 512, false, false),
 # std::make_tuple(25088, 1, 1024, false, false),
 # std::make_tuple(25088, 1, 2048, false, false),
 # std::make_tuple(25088, 1, 4096, false, false),
-# std::make_tuple(25088, 1, 8192, false, false),
 # std::make_tuple(65536, 1, 512, false, false),
 # std::make_tuple(65536, 1, 1024, false, false),
 # std::make_tuple(65536, 1, 2048, false, false),
 # std::make_tuple(65536, 1, 4096, false, false),
-# std::make_tuple(65536, 1, 8192, false, false),
 # std::make_tuple(131072, 1, 512, false, false),
 # std::make_tuple(131072, 1, 1024, false, false),
 # std::make_tuple(131072, 1, 2048, false, false),
 # std::make_tuple(131072, 1, 4096, false, false),
-# std::make_tuple(131072, 1, 8192, false, false),
 # };
 
 # std::vector<std::tuple<int, int, int, bool, bool>> inference_device_set = {
@@ -93,20 +89,16 @@ done
 # std::make_tuple(16384, 1, 1024, false, false),
 # std::make_tuple(16384, 1, 2048, false, false),
 # std::make_tuple(16384, 1, 4096, false, false),
-# std::make_tuple(16384, 1, 8192, false, false),
 # std::make_tuple(25088, 1, 512, false, false),
 # std::make_tuple(25088, 1, 1024, false, false),
 # std::make_tuple(25088, 1, 2048, false, false),
 # std::make_tuple(25088, 1, 4096, false, false),
-# std::make_tuple(25088, 1, 8192, false, false),
 # std::make_tuple(65536, 1, 512, false, false),
 # std::make_tuple(65536, 1, 1024, false, false),
 # std::make_tuple(65536, 1, 2048, false, false),
 # std::make_tuple(65536, 1, 4096, false, false),
-# std::make_tuple(65536, 1, 8192, false, false),
 # std::make_tuple(131072, 1, 512, false, false),
 # std::make_tuple(131072, 1, 1024, false, false),
 # std::make_tuple(131072, 1, 2048, false, false),
 # std::make_tuple(131072, 1, 4096, false, false),
-# std::make_tuple(131072, 1, 8192, false, false),
 # };
