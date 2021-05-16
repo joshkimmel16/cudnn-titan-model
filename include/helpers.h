@@ -19,16 +19,6 @@ unsigned int get_num_rounds (unsigned int num_tiles, unsigned int threads_tile, 
 // given a vector length, return # cycles to compute vector operation. Can include: addition/multiplication/reduction
 unsigned int vector_op(unsigned int len, TitanV m);
 
-// given the number of accesses (total), data width, and L2 bandwidth
-// determine the number of cycles of latency to retrieve/store all necessary data from/to L2 cache
-// use the clock to convert to cycles (from time)
-unsigned int l2_latency(unsigned int num_accesses, unsigned int tiles_round, TitanV m);
-
-// given the number of accesses (total), data width, and memory bandwidth
-// determine the number of cycles of latency to retrieve/store all necessary data from/to memory
-// use the clock to convert to cycles (from time)
-unsigned int mem_latency(unsigned int num_accesses, unsigned int tiles_round, TitanV m);
-
 // given the number of concurrent threads working in a thread block and machine parameters
 // determine how much of the memory access latency can be hidden by strategically executing ready threads
 double latency_hide(unsigned int num_threads, TitanV m);
@@ -55,10 +45,8 @@ unsigned int tile_op_3(unsigned int len, unsigned int ht, unsigned int elems_thr
 // given tile dimensions and the # of elements each thread must process in the tile, 
 // return # cycles to compute the tile associated with those parameters
 // this method assumes all data is already present in memory, L2 cache has infinite capacity
-// TODO: relax infinite capacity assumption
 unsigned int tile_op_4(unsigned int len, unsigned int ht, unsigned int elems_thread, unsigned int tiles_round, unsigned int tiles_sm, unsigned int tile_overlap, TitanV m);
 
-unsigned int tile_op_5(unsigned int len, unsigned int ht, unsigned int elems_thread, unsigned int tiles_round, unsigned int tiles_sm, unsigned int tile_overlap, unsigned int num_threads, TitanV m);
 
 // given # of cycles and a clock rate (MHz)
 // return # of us to execute those cycles
