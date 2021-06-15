@@ -44,6 +44,10 @@ build/bin/model [-ni [input_dimension]] [-nn [output_dimension]] [-ti [input_til
 
 The type imposes various assumptions on the analysis that could be useful for determining bottlenecks and/or architectural properties of the system. REGISTER assumes that all data is pre-loaded into registers. SCRATCHPAD assumes that all data is present in fast scratchpad memory. L2 assumes all data is present in the L2 cache. MEMORY models the true execution as it would take place in the GPU.
 
+## Documentation
+
+For more robust documentation and analysis, see [this paper](https://github.com/joshkimmel16/cudnn-titan-model/cs259_miniproject2_report.pdf).
+
 ## Authors
 
 * **Josh Kimmel**
